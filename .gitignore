@@ -1,0 +1,8 @@
+node_modules
+.env
+*.log
+.DS_Store
+
+# SQLite dev database — each dev/environment should have its own
+prisma/dev.db
+prisma/dev.db-journal

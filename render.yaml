@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: grownet-api
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEMO_MODE
+        value: "true"     # set to "false" once a real SMS provider is wired up
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false       # set to your Netlify URL after the first deploy
+      - key: DATABASE_URL
+        sync: false       # paste your Neon connection string
