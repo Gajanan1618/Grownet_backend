@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.routes.js'
 import userRoutes from './routes/users.routes.js'
 import listingRoutes from './routes/listings.routes.js'
 import requirementRoutes from './routes/requirements.routes.js'
+import offerRoutes from './routes/offers.routes.js'
 
 export function createApp() {
   const app = express()
@@ -23,6 +24,7 @@ export function createApp() {
   app.use('/api/users', userRoutes)
   app.use('/api/listings', listingRoutes)
   app.use('/api/requirements', requirementRoutes)
+  app.use('/api/offers', offerRoutes)
 
   app.use(notFoundHandler)
   app.use(errorHandler)

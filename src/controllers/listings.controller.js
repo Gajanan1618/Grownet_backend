@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '../lib/db.js'
 import { listings } from '../db/schema.js'
+import { recordOffer } from './offers.controller.js'
 
 function serializeListing(l) {
   const { category, farmerName, createdAt, ...rest } = l
@@ -41,5 +42,15 @@ export async function sendListingOfferHandler(req, res) {
     .set({ offers: current.offers + 1 })
     .where(eq(listings.id, current.id))
     .returning()
+
+  await recordOffer({
+    targetType: 'listing',
+    targetId: current.id,
+    targetTitle: current.name,
+    fromUser: req.user,
+    toUserId: current.farmerId,
+    body: req.body,
+  })
+
   res.json({ listing: serializeListing(updated) })
 }
