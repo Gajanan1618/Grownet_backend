@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '../lib/db.js'
 import { requirements } from '../db/schema.js'
+import { recordOffer } from './offers.controller.js'
 
 function serializeRequirement(r) {
   const { category, buyerName, createdAt, ...rest } = r
@@ -41,5 +42,15 @@ export async function sendRequirementOfferHandler(req, res) {
     .set({ offers: current.offers + 1 })
     .where(eq(requirements.id, current.id))
     .returning()
+
+  await recordOffer({
+    targetType: 'requirement',
+    targetId: current.id,
+    targetTitle: current.product,
+    fromUser: req.user,
+    toUserId: current.buyerId,
+    body: req.body,
+  })
+
   res.json({ requirement: serializeRequirement(updated) })
 }

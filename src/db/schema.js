@@ -67,6 +67,28 @@ export const requirements = pgTable(
   (t) => [index('requirements_category_idx').on(t.category), index('requirements_created_at_idx').on(t.createdAt)]
 )
 
+// A real, addressable offer — who sent it, who it's for, on what, with what
+// terms. Earlier versions only incremented a counter on the listing/requirement,
+// so the recipient (farmer or buyer) had no way to actually see or act on it.
+export const offers = pgTable(
+  'offers',
+  {
+    id: text('id').primaryKey(),
+    targetType: text('target_type').notNull(), // 'listing' | 'requirement'
+    targetId: text('target_id').notNull(),
+    targetTitle: text('target_title').notNull(), // denormalized listing/requirement name, for display
+    fromUserId: text('from_user_id').notNull().references(() => users.id),
+    fromUserName: text('from_user_name').notNull(),
+    toUserId: text('to_user_id').notNull().references(() => users.id),
+    price: doublePrecision('price'),
+    qty: text('qty'),
+    message: text('message'),
+    status: text('status').notNull().default('pending'), // 'pending' | 'accepted' | 'declined'
+    createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
+  },
+  (t) => [index('offers_to_user_idx').on(t.toUserId), index('offers_created_at_idx').on(t.createdAt)]
+)
+
 // Replaces the in-memory OTP Map — a free Render instance restarts/spins down,
 // which would otherwise wipe pending OTPs. This table also means multiple
 // API instances (a future paid tier) share OTP state correctly.

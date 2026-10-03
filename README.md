@@ -36,7 +36,9 @@ See the top-level launch guide for the full click-by-click steps. Short version:
 | POST | /api/users/me/email/send, /confirm | ✔ |
 | GET | /api/listings, /api/requirements | – |
 | POST | /api/listings (farmer), /api/requirements (buyer) | ✔ |
-| POST | /api/listings/:id/offers, /api/requirements/:id/offers | ✔ |
+| POST | /api/listings/:id/offers, /api/requirements/:id/offers | ✔ | (body: `{ price?, qty?, message? }`)
+| GET | /api/offers | ✔ | offers received by the logged-in user |
+| PATCH | /api/offers/:id | ✔ | body `{ status: 'accepted' \| 'declined' }`, recipient only |
 
 ## Known dev-only shortcuts (fix before real scale)
 
@@ -47,5 +49,6 @@ See the top-level launch guide for the full click-by-click steps. Short version:
   this scale, add a cron/`DELETE ... WHERE expires_at < now()` later).
 - `DEMO_MODE=true` returns the OTP in the API response — turn this off and wire a real SMS
   provider (MSG91/Twilio/Gupshup) before real users sign up.
-- Offers only increment a counter — there's no Offer/Deal table yet. That's the next thing to
-  add before payments/escrow per the architecture doc.
+- Offers are now real rows (`offers` table) with a sender, recipient, price/qty/message and a
+  status — the next step toward a full Deal/escrow flow per the architecture doc is turning an
+  accepted offer into a Deal record.
